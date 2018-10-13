@@ -1,0 +1,3 @@
+In order for the sale system to work you might have to download and set "univocity-parsers-2.7.6" in the package library.
+To do that:
+Right click on the package > goto build path > configure path > libraries > select add external jar > select the "univocity-parsers-2.7.6" jar file from the path
