@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+
 public class Inventory {
  private int productId;
  private String productName;
@@ -61,7 +64,7 @@ public class Inventory {
 	  this.productSupplier = newproductSupplier;
 	 }
  
- public void productDetails(String filepath, String pId) throws IOException {
+ public List<String> productDetails(String filepath, String pId) throws IOException {
 		//Creating a dictionary to map the productsID with its equivalentproduct Values
 		  Map<String, List<String>> productDict = new HashMap<String, List<String>>();
 		  
@@ -69,18 +72,20 @@ public class Inventory {
 		  
 		  for(Inventory u: InventoryValues) {
 			  List<String> values = new ArrayList<String>();
-			  values.add(u.getproductName());
+			  values.add(Integer.toString(u.getproductId()));
 			  values.add(Integer.toString(u.getproductCount()));
 			  values.add(Double.toString(u.getproductPrice()));
 			  values.add(u.getproductSupplier());
-			  productDict.put(Integer.toString(u.getproductId()), values);
+			  productDict.put(u.getproductName(), values);
 		   }
 		  
-		  System.out.println(productDict.get(pId));
+		  return productDict.get(pId);
+		  //System.out.println(productDict.get(pId));
 		  //System.out.println(productDict.values());
 		  //System.out.println(productDict.keySet());
 		  
 		}
+
 	
 	
 	//Takes the input from file, updates the product count value and writes the same in the file
@@ -161,9 +166,7 @@ public class Inventory {
 					  System.out.printf("[ProductId=%d,ProductName=%s, ProductCount=%d, ProductPrice=%f, ProductSupplier=%s]\n",u.getproductId(), u.getproductName(),u.getproductCount(),u.getproductPrice(),u.getproductSupplier());
 				   }
 				*/
-			    
-			 
-	}
+				}
  
  
 }
