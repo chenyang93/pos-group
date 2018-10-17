@@ -6,11 +6,16 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 
 public class AddItem_Frame extends JFrame implements ActionListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JTextField itemID;      
 	private JTextField amount;
 	private JButton enterButton;
@@ -19,21 +24,21 @@ public class AddItem_Frame extends JFrame implements ActionListener{
 	private JTextArea transDialog;
 	private JLabel itemAmount;
 	
-	private String quantity="";
+	private int quantity=0;
 	private String id="";
-	Sale sale=new Sale();
+	Sale sale;
 	public List<Item> databaseItem = new ArrayList<Item>(); 
-	public List<Item> transactionItem = new ArrayList<Item>();
-	String itemdatabase="";
+	public List<Item> salelist= new ArrayList<Item>();
+	String addFlag;
 	Inventory inventory;
-	public AddItem_Frame(String itemdatabase,Sale newsale,JTextArea textShow,String operation){
+	public AddItem_Frame(String flag,Sale newsale,JTextArea textShow,String operation){
 		setLayout(null);
 		setSize(520,200);
 		setLocation(500,280);
 		
-		this.sale=newsale;
+		sale=newsale;
 		transDialog = textShow;
-		this.itemdatabase=itemdatabase;
+		addFlag=flag;
 		
 		enterButton = new JButton("Enter");
 		enterButton.setBounds(170,100,80,20);
@@ -52,14 +57,16 @@ public class AddItem_Frame extends JFrame implements ActionListener{
 		itemIdLabel.setBounds(90,30,150,20);
 		add(itemIdLabel);
 		
-		amount = new JTextField(15);
-		amount.setToolTipText("amount");
-		amount.setBounds(180,65,150,20);
-		add(amount);
-		
-		itemAmount = new JLabel("Amount:");
-		itemAmount.setBounds(90,65,150,20);
-		add(itemAmount);
+		if (addFlag.equals("Add")||addFlag.equals("Update")){ 
+			amount = new JTextField(15);
+			amount.setToolTipText("amount");
+			amount.setBounds(180,65,150,20);
+			add(amount);
+			
+			itemAmount = new JLabel("Amount:");
+			itemAmount.setBounds(90,65,150,20);
+			add(itemAmount);
+		}
 		
 		enterButton.addActionListener(this);
 		exitButton.addActionListener(this);
@@ -72,18 +79,41 @@ public class AddItem_Frame extends JFrame implements ActionListener{
 			dispose();
 		
 		}
-//		if(e.getSource()==enterButton){
-//			id=itemID.getText();
-//			quantity=amount.getText();
-//			inventory.accessInventory(itemdatabase, databaseItem);
-//			boolean foundItem = false;
-//			for (int counter = 0; counter < databaseItem.size() && foundItem == false; counter++){
-//				if (databaseItem.get(counter).getItemId() == id) //checks if item is found on the database
-//			      {
-//					transactionItem.add(new Item(id,databaseItem.get(counter).getItemName(),databaseItem.get(counter).getPrice(),databaseItem.get(counter).getQuantity(),databaseItem.get(counter).getSupplier()));
-//			      }
-//			}
-//		}
+		if(e.getSource()==enterButton){
+			id=itemID.getText();
+			if(addFlag.equals("Add")){
+				quantity=Integer.parseInt(amount.getText());
+				if(!sale.addItem(id,quantity)){
+					JOptionPane.showMessageDialog(null, "Item cannot be found from inventory");
+				}else{
+					sale.updateTotalPirce();
+					updateTextArea();
+				}
+			}else if(addFlag.equals("Delete")){
+				if(!sale.removeItem(id)){
+					JOptionPane.showMessageDialog(null, "Item cannot be found from cart");
+				}else{
+					updateTextArea();
+				}
+			}else if(addFlag.equals("Update")){
+				quantity=Integer.parseInt(amount.getText());
+				if(!sale.updateItem(id,quantity)){
+					JOptionPane.showMessageDialog(null, "Item cannot be found from inventory");
+				}else{
+					sale.updateTotalPirce();
+					updateTextArea();
+				}
+			}
+			this.setVisible(false);
+			dispose();
+		}
 	}
-
+	public void updateTextArea(){
+		transDialog.setText(null);
+		salelist=sale.getSaleItemList();
+		for(Item item:salelist){
+			String itemString=item.getItemId()+"\t"+item.getItemName()+"\t"+ "x" + item.getQuantity() + "\t$" + String.format("%.2f", item.getQuantity()*item.getPrice()) + "\n";
+			transDialog.append(itemString);
+		}
+	}
 }

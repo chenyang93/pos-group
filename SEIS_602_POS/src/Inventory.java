@@ -1,39 +1,17 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 
 public class Inventory {
-	private int itemId;
-	private int quantity;
-	private int threshold;
-	private boolean orderPlaced;
 	private static Inventory uniqueInstance = null;
-	public int getItemId() {
-		return itemId;
-	}
-	public void setItemId(int itemId) {
-		this.itemId = itemId;
-	}
-	public int getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-	public int getThreshold() {
-		return threshold;
-	}
-	public void setThreshold(int threshold) {
-		this.threshold = threshold;
-	}
-	public boolean isOrderPlaced() {
-		return orderPlaced;
-	}
-	public void setOrderPlaced(boolean orderPlaced) {
-		this.orderPlaced = orderPlaced;
+	public Inventory(){
 	}
 	public static synchronized Inventory getInstance()
 	{
@@ -51,20 +29,20 @@ public class Inventory {
 			//reads the entire database
 			while ((line = textReader.readLine()) != null)
 			{
-				lineSort = line.split(" "); //separates words
+				lineSort = line.split(",");
 				databaseItem.add(new Item(lineSort[0],lineSort[1],Float.parseFloat(lineSort[2]),
 						Integer.parseInt(lineSort[3]),lineSort[4]));
 			}
 			textReader.close();
 		}catch(FileNotFoundException ex) {
 	            System.out.println(
-	                "Unable to open file '" + 
+	                "Cannot open the database file '" + 
 	                		databaseFile + "'"); 
 	            ableToOpen = false;
 	        }
 	        catch(IOException ex) {
 	            System.out.println(
-	                "Error reading file '" 
+	                "Error occcurs when reading database file '" 
 	                + databaseFile + "'");  
 	            ableToOpen = false;
 	        }
@@ -72,5 +50,30 @@ public class Inventory {
 		
 		return ableToOpen;
 		
+	}
+	public void updateInventory(String databaseFile,List<Item> saleItem,List<Item> databaseItem){
+		int newTotalQuantity;
+		for(int i=0;i<saleItem.size();i++){
+			for(int j=0;j<databaseItem.size();j++){
+				if(saleItem.get(i).getItemId().equals(databaseItem.get(j).getItemId())){
+					newTotalQuantity=databaseItem.get(j).getQuantity()-saleItem.get(i).getQuantity();
+					databaseItem.get(j).setQuantity(newTotalQuantity);
+				}
+			}
+		}
+		try{
+			File file=new File(databaseFile);
+			FileWriter fileR = new FileWriter(file.getAbsoluteFile(),false);
+			BufferedWriter bWriter = new BufferedWriter(fileR);
+			PrintWriter writer = new PrintWriter(bWriter);
+			for(int i=0;i<databaseItem.size();i++){
+				writer.println(String.valueOf(databaseItem.get(i).getItemId()) + "," + databaseItem.get(i).getItemName() + ","
+						+ String.valueOf(databaseItem.get(i).getPrice() ) + "," +
+						String.valueOf( databaseItem.get(i).getQuantity())+","+databaseItem.get(i).getSupplier() );
+			}
+			bWriter.close();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 }

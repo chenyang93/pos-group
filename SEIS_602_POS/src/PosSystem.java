@@ -3,8 +3,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.*;
 public class PosSystem {
-	public static String employeeDatabase = "Database/employeeDatabase.txt";
-
+	public static String employeeDatabase = "Database/employeeDatabase.csv";
+	public static String itemDatabase = "Database/itemDatabase.csv"; 
 	private static Object out;
 	
 	public List<Employee> employees = new ArrayList<Employee>();
@@ -22,9 +22,9 @@ public class PosSystem {
 			FileReader file=new FileReader(employeeDatabase);
 			BufferedReader textReader = new BufferedReader(file);
 			while((line=textReader.readLine())!=null){
-				lineResult = line.split(" ");
-				String name=lineResult[2]+" "+lineResult[3];
-		        employees.add(new Employee(lineResult[0],name,lineResult[1],lineResult[4]));
+				lineResult = line.split(",");
+				String name=lineResult[2];
+		        employees.add(new Employee(lineResult[0],name,lineResult[1],lineResult[3]));
 			}
 			textReader.close();
 		}catch(FileNotFoundException e){
@@ -66,4 +66,12 @@ public class PosSystem {
 		}
 		return 0;
 	}
+	public boolean checkTemp()
+	  {
+	   String temp = "Database/temp.txt";
+	   File f=new File(temp);
+	     if(f.exists() && !f.isDirectory())
+	      return true;
+	     return false;
+	  }
 }

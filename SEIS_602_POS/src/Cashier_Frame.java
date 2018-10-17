@@ -36,6 +36,8 @@ public class Cashier_Frame extends JFrame implements ActionListener{
 		saleButton.addActionListener(this);
 		returnButton.addActionListener(this);
 		logOutButton.addActionListener(this);
+		
+		
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

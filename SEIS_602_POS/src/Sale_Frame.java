@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -38,8 +39,8 @@ public class Sale_Frame extends JFrame implements ActionListener{
 		add(addItemButton);
 		
 		deleteItemButton=new JButton("Delete Item");
-		addItemButton.setBounds(800*4/5,600*2/8,100,50);
-		add(addItemButton);
+		deleteItemButton.setBounds(800*4/5,600*2/8,100,50);
+		add(deleteItemButton);
 		
 		updateItemButton=new JButton("Update Item");
 		updateItemButton.setBounds(800*4/5,600*3/8,100,50);
@@ -74,13 +75,14 @@ public class Sale_Frame extends JFrame implements ActionListener{
 		
 		scroll = new JScrollPane (textShow, 
 				   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scroll.setBounds(800/16,600/16,3*800/5,4*600/5);  
+		scroll.setBounds(800/16,600/16,3*800/5,5*600/6);  
 		add(scroll);
-		
-//		if(sale.equals("Sale")){
-//			newsale=new Sale(items,saleTotal);
-//			itemdatabase="Database/itemdatabase.txt";
-//		}
+		if(sale.equals("Sale")){
+			//newsale=new Sale(items,saleTotal);
+			newsale=new Sale();
+			itemdatabase="Database/itemdatabase.csv";
+		}
+		newsale.connectInventory(itemdatabase);
 	}
 	
 	
@@ -96,10 +98,43 @@ public class Sale_Frame extends JFrame implements ActionListener{
 			dispose();
 		}
 		if(e.getSource()==addItemButton){
-			addItem=new AddItem_Frame(itemdatabase,newsale,textShow,saleoperation);
+			addItem=new AddItem_Frame("Add",newsale,textShow,saleoperation);
 			addItem.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			addItem.setVisible(true);
-			dispose();
+		}
+		if(e.getSource()==deleteItemButton){
+			addItem=new AddItem_Frame("Delete",newsale,textShow,saleoperation);
+			addItem.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			addItem.setVisible(true);
+		}
+		if(e.getSource()==updateItemButton){
+			addItem=new AddItem_Frame("Update",newsale,textShow,saleoperation);
+			addItem.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			addItem.setVisible(true);
+		}
+		if(e.getSource()==endSaleButton){
+			if(newsale.getSaleSize()>0){
+				newsale.updateToInventory(itemdatabase);
+				JOptionPane.showMessageDialog(null,"Transaction Has Been Ended");
+				PosSystem sys=new PosSystem();
+	            Cashier_Frame cashier = new Cashier_Frame(sys);
+	            cashier.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	            cashier.setVisible(true);
+	            this.setVisible(false);
+	 			this.dispose();
+			}else{
+				JOptionPane.showMessageDialog(null, "Cart is currently empty. Please add items before ending transaction");
+			}
+		}
+		if(e.getSource()==cancelSaleButton){
+			JOptionPane.showMessageDialog(null,"Transaction Has Been Cancelled");
+			PosSystem sys=new PosSystem();
+            Cashier_Frame cashier = new Cashier_Frame(sys);
+            cashier.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            cashier.setVisible(true);
+
+            this.setVisible(false);
+            dispose();
 		}
 	}
 

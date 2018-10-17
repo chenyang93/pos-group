@@ -5,7 +5,6 @@ public class Item {
 	private float price;
 	private int quantity;
 	private String supplier;
-	
 	public Item(String itemid,String itemname,float price,int quantity,String supplier){
 		this.itemId=itemid;
 		this.itemName=itemname;
@@ -53,8 +52,5 @@ public class Item {
 	public void setSupplier(String supplier) {
 		this.supplier = supplier;
 	}
-	
-	public void updateQuantity(int quantity){
-		this.quantity=quantity;
-	}
+
 }
